@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+@theme {
+  /* Marka Renklerimiz */
+  --color-brand-dark: #0F172A;
+  --color-brand-yellow: #F59E0B;
+  --color-brand-light: #F8FAFC;
+  --color-brand-text: #334155;
+
+  /* Tipografi */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-brand-light);
+    color: var(--color-brand-text);
+    @apply antialiased selection:bg-brand-yellow selection:text-brand-dark;
+  }
+}
