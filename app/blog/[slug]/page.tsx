@@ -1,4 +1,4 @@
-import { blogPosts } from '@/lib/blogData';
+import { blogPosts } from '@/lib/blog';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { Metadata } from 'next';
