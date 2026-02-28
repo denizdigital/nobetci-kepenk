@@ -33,7 +33,7 @@ export default async function DistrictDetailPage({ params }: Props) {
   
   if (!district) notFound();
 
-  const neighbors = getNeighborDistricts(district.index);
+ const neighbors = getNeighborDistricts(district.slug);
 
   const schema = {
     "@context": "https://schema.org",

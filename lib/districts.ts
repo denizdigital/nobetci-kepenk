@@ -41,16 +41,12 @@ export const districts = [
   { name: "Zeytinburnu", slug: "zeytinburnu-kepenk-tamiri" },
 ].sort((a, b) => a.name.localeCompare(b.name));
 
-// --- AŞAĞIDAKİ FONKSİYONLAR SİLİNDİĞİ İÇİN HATA ALIYORDUK ---
-// --- BUNLARI GERİ EKLEDİK: ---
-
-// Slug'a (URL'deki isme) göre ilçeyi bulan fonksiyon
+// --- İŞTE BU FONKSİYONLAR EKSİK OLDUĞU İÇİN HATA ALIYORDUN ---
 export function getDistrictBySlug(slug: string) {
   return districts.find((d) => d.slug === slug);
 }
 
-// Diğer ilçeleri (Komşu ilçeler olarak) öneren fonksiyon
 export function getNeighborDistricts(slug: string) {
-  // Basit mantık: Şu anki ilçe hariç sıradaki 4 ilçeyi getirir
+  // Kendisi hariç sonraki 4 ilçeyi getir
   return districts.filter((d) => d.slug !== slug).slice(0, 4);
 }
