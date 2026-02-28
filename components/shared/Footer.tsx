@@ -1,6 +1,7 @@
 import Link from 'next/link';
-import Logo from './Logo'; // Eğer Logo.tsx Footer ile aynı klasördeyse bu satır kalsın.
-import DDOLogo from '@/components/ui/DDOLogo'; // <-- KRİTİK DÜZELTME BURADA
+import Logo from './Logo';
+// DDO Logo importunu buraya ekledik (import yolunu kontrol etmeyi unutma)
+import DDOLogo from '@/components/ui/DDOLogo'; 
 import { Phone, MapPin, Clock } from 'lucide-react';
 
 export default function Footer() {
@@ -11,8 +12,9 @@ export default function Footer() {
           <div className="bg-white inline-block p-2 rounded-xl mb-4">
             <Logo className="w-32 h-auto" />
           </div>
+          {/* GÜNCELLEME 1: Metin değişti */}
           <p className="mt-4 text-sm leading-relaxed text-gray-400">
-            İstanbul Avrupa Yakası'nda 7/24 nöbetçi kepenk tamiri servisi. 45 dakikada hızlı müdahale, orijinal yedek parça ve 2 yıl garantili kesin çözüm.
+            İstanbul genelinde 7/24 nöbetçi kepenk tamiri servisi. 45 dakikada hızlı müdahale, orijinal yedek parça ve 2 yıl garantili kesin çözüm.
           </p>
         </div>
         
@@ -21,7 +23,8 @@ export default function Footer() {
           <ul className="space-y-2">
             <li><Link href="/hizmetler" className="hover:text-brand-yellow transition-colors">Otomatik Kepenk Tamiri</Link></li>
             <li><Link href="/hizmetler" className="hover:text-brand-yellow transition-colors">Kepenk Motoru Değişimi</Link></li>
-            <li><Link href="/ilceler" className="hover:text-brand-yellow transition-colors">Avrupa Yakası Hizmet Bölgeleri</Link></li>
+            {/* GÜNCELLEME 2: Link başlığı değişti */}
+            <li><Link href="/ilceler" className="hover:text-brand-yellow transition-colors">Tüm Hizmet Bölgeleri</Link></li>
             <li><Link href="/iletisim" className="hover:text-brand-yellow transition-colors">İletişim</Link></li>
           </ul>
         </div>
@@ -42,17 +45,18 @@ export default function Footer() {
             </li>
             <li className="flex items-start gap-3">
               <MapPin className="text-brand-yellow shrink-0 mt-1" size={20} />
-              <p className="text-sm">İstanbul / Avrupa Yakası</p>
+              {/* GÜNCELLEME 3: Konum değişti */}
+              <p className="text-sm">İstanbul / Tüm İlçeler</p>
             </li>
           </ul>
         </div>
       </div>
       
-      {/* Alt Çubuk (Copyright + DDO Logo + KVKK) */}
+      {/* Alt Çubuk */}
       <div className="container mx-auto px-4 mt-12 pt-8 border-t border-gray-800 text-center text-xs text-gray-500 flex flex-col md:flex-row justify-between items-center gap-6">
         <p>&copy; {new Date().getFullYear()} Nöbetçi Kepenk. Tüm hakları saklıdır.</p>
         
-        {/* Deniz Digital Operate Logo - Orta Alan */}
+        {/* Deniz Digital Operate Logo */}
         <div className="flex flex-col items-center gap-1 group">
           <span className="text-[10px] text-gray-600 group-hover:text-gray-400 transition-colors">Designed & Developed by</span>
           <a href="https://denizdigitaloperate.com" target="_blank" rel="noopener noreferrer" className="block" aria-label="Deniz Digital Operate">
@@ -60,7 +64,7 @@ export default function Footer() {
           </a>
         </div>
 
-        <p>🔒 Verileriniz KVKK kapsamında korunmaktadır. IP adresleri maskelenerek şifrelenir.</p>
+        <p>🔒 Verileriniz KVKK kapsamında korunmaktadır.</p>
       </div>
     </footer>
   );
