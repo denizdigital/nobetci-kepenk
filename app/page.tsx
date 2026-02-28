@@ -25,11 +25,11 @@ export default function Home() {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-yellow opacity-75"></span>
               <span className="relative inline-flex rounded-full h-3 w-3 bg-brand-yellow"></span>
             </span>
-            Şu an Avrupa Yakası'nda 3 gezici aracımız aktif
+          
           </div>
           
           <h1 className="text-4xl md:text-6xl font-heading font-extrabold text-brand-dark leading-tight mb-6">
-            İstanbul Avrupa Yakası <br className="hidden md:block" />
+            İstanbul  <br className="hidden md:block" />
             <span className="text-brand-yellow">7/24 Acil</span> Kepenk Tamiri
           </h1>
           
@@ -132,8 +132,8 @@ export default function Home() {
         <div className="container mx-auto max-w-5xl">
           <div className="flex flex-col md:flex-row items-start md:items-end justify-between mb-10 gap-4">
             <div>
-              <h2 className="text-3xl font-heading font-bold text-brand-dark mb-2">Avrupa Yakası Hizmet Bölgelerimiz</h2>
-              <p className="text-gray-500">Tüm Avrupa yakasına 45 dakikada ulaşıyoruz.</p>
+              <h2 className="text-3xl font-heading font-bold text-brand-dark mb-2">  Bölgelerimiz</h2>
+              <p className="text-gray-500">Tüm İstanbulun her yerine 45 dakikada ulaşıyoruz.</p>
             </div>
             <Link href="/ilceler" className="flex items-center text-brand-dark font-semibold hover:text-brand-yellow transition-colors">
               Tümünü Gör <ArrowRight size={20} className="ml-1" />

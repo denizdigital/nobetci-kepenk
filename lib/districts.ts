@@ -1,24 +1,44 @@
+// lib/districts.ts
+
 export const districts = [
-  { name: 'Şişli', slug: 'sisli' }, { name: 'Beşiktaş', slug: 'besiktas' },
-  { name: 'Bakırköy', slug: 'bakirkoy' }, { name: 'Beyoğlu', slug: 'beyoglu' },
-  { name: 'Fatih', slug: 'fatih' }, { name: 'Zeytinburnu', slug: 'zeytinburnu' },
-  { name: 'Bağcılar', slug: 'bagcilar' }, { name: 'Bahçelievler', slug: 'bahcelievler' },
-  { name: 'Küçükçekmece', slug: 'kucukcekmece' }, { name: 'Avcılar', slug: 'avcilar' },
-  { name: 'Beylikdüzü', slug: 'beylikduzu' }, { name: 'Esenyurt', slug: 'esenyurt' },
-  { name: 'Başakşehir', slug: 'basaksehir' }, { name: 'Sarıyer', slug: 'sariyer' },
-  { name: 'Kağıthane', slug: 'kagithane' }
-];
+  // --- ANADOLU YAKASI (Yeni Eklenenler) ---
+  { name: "Ataşehir", slug: "atasehir-kepenk-tamiri" },
+  { name: "Beykoz", slug: "beykoz-kepenk-tamiri" },
+  { name: "Çekmeköy", slug: "cekmekoy-kepenk-tamiri" },
+  { name: "Kadıköy", slug: "kadikoy-kepenk-tamiri" },
+  { name: "Kartal", slug: "kartal-kepenk-tamiri" },
+  { name: "Maltepe", slug: "maltepe-kepenk-tamiri" },
+  { name: "Pendik", slug: "pendik-kepenk-tamiri" },
+  { name: "Sancaktepe", slug: "sancaktepe-kepenk-tamiri" },
+  { name: "Sultanbeyli", slug: "sultanbeyli-kepenk-tamiri" },
+  { name: "Şile", slug: "sile-kepenk-tamiri" },
+  { name: "Tuzla", slug: "tuzla-kepenk-tamiri" },
+  { name: "Ümraniye", slug: "umraniye-kepenk-tamiri" },
+  { name: "Üsküdar", slug: "uskudar-kepenk-tamiri" },
 
-export function getDistrictBySlug(slug: string) {
-  const index = districts.findIndex(d => d.slug === slug);
-  if (index === -1) return null;
-  return { ...districts[index], index };
-}
-
-// SEO İç Linkleme: Her ilçeden sonraki 2 komşu ilçeye link vererek link suyunu (link juice) dağıtıyoruz.
-export function getNeighborDistricts(currentIndex: number) {
-  const count = districts.length;
-  const next1 = districts[(currentIndex + 1) % count];
-  const next2 = districts[(currentIndex + 2) % count];
-  return [next1, next2];
-}
+  // --- AVRUPA YAKASI (Mevcutlar) ---
+  { name: "Arnavutköy", slug: "arnavutkoy-kepenk-tamiri" },
+  { name: "Avcılar", slug: "avcilar-kepenk-tamiri" },
+  { name: "Bağcılar", slug: "bagcilar-kepenk-tamiri" },
+  { name: "Bahçelievler", slug: "bahcelievler-kepenk-tamiri" },
+  { name: "Bakırköy", slug: "bakirkoy-kepenk-tamiri" },
+  { name: "Başakşehir", slug: "basaksehir-kepenk-tamiri" },
+  { name: "Bayrampaşa", slug: "bayrampasa-kepenk-tamiri" },
+  { name: "Beşiktaş", slug: "besiktas-kepenk-tamiri" },
+  { name: "Beylikdüzü", slug: "beylikduzu-kepenk-tamiri" },
+  { name: "Beyoğlu", slug: "beyoglu-kepenk-tamiri" },
+  { name: "Büyükçekmece", slug: "buyukcekmece-kepenk-tamiri" },
+  { name: "Esenler", slug: "esenler-kepenk-tamiri" },
+  { name: "Esenyurt", slug: "esenyurt-kepenk-tamiri" },
+  { name: "Eyüpsultan", slug: "eyupsultan-kepenk-tamiri" },
+  { name: "Fatih", slug: "fatih-kepenk-tamiri" },
+  { name: "Gaziosmanpaşa", slug: "gaziosmanpasa-kepenk-tamiri" },
+  { name: "Güngören", slug: "gungoren-kepenk-tamiri" },
+  { name: "Kağıthane", slug: "kagithane-kepenk-tamiri" },
+  { name: "Küçükçekmece", slug: "kucukcekmece-kepenk-tamiri" },
+  { name: "Sarıyer", slug: "sariyer-kepenk-tamiri" },
+  { name: "Silivri", slug: "silivri-kepenk-tamiri" },
+  { name: "Sultangazi", slug: "sultangazi-kepenk-tamiri" },
+  { name: "Şişli", slug: "sisli-kepenk-tamiri" },
+  { name: "Zeytinburnu", slug: "zeytinburnu-kepenk-tamiri" },
+].sort((a, b) => a.name.localeCompare(b.name)); // Hepsini alfabetik sıraya dizer

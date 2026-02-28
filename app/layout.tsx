@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Poppins } from "next/font/google";
 import "./globals.css";
 
-// --- BİLEŞEN İMPORTLARI (DÜZELTİLMİŞ HALİ) ---
+// --- BİLEŞEN İMPORTLARI ---
 
 import Navbar from "@/components/shared/Navbar";
 
@@ -13,7 +13,7 @@ import CTAStickyBar from "@/components/shared/CTAStickyBar";
 import ClientTracker from "@/components/shared/ClientTracker";
 import ShutterAnimation from "@/components/ui/ShutterAnimation";
 
-// ✅ DÜZELTİLEN SATIR BURASI:
+// ✅ COOKIE BANNER (Doğru Import)
 import CookieBanner from "@/components/ui/CookieBanner"; 
 
 const inter = Inter({ 
@@ -35,14 +35,17 @@ export const metadata: Metadata = {
     default: "İstanbul Kepenk Tamiri | 7/24 Acil Servis & 45 Dk'da Kapınızda",
     template: "%s | Nöbetçi Kepenk"
   },
-  description: "Avrupa Yakası 7/24 nöbetçi kepenk tamiri servisi. Garantili motor değişimi, otomatik kepenk onarımı için hemen arayın: 0536 482 52 05. 45 dakikada yanınızdayız.",
-  keywords: ["kepenk tamiri", "otomatik kepenk servisi", "kepenk motoru", "istanbul kepenk tamircisi", "7/24 kepenk tamiri"],
+  // 👇 GÜNCELLENEN KISIM: "Avrupa Yakası" yerine "İstanbul genelinde" yazıldı
+  description: "İstanbul genelinde 7/24 nöbetçi kepenk tamiri servisi. Anadolu ve Avrupa yakasında garantili motor değişimi, otomatik kepenk onarımı için hemen arayın: 0536 482 52 05.",
+  // 👇 GÜNCELLENEN KISIM: Anahtar kelimelere "anadolu yakası" eklendi
+  keywords: ["kepenk tamiri", "otomatik kepenk servisi", "kepenk motoru", "istanbul kepenk tamircisi", "7/24 kepenk tamiri", "anadolu yakası kepenk tamiri"],
   alternates: {
     canonical: '/',
   },
   openGraph: {
-    title: "Nöbetçi Kepenk | 7/24 Acil Servis",
-    description: "Avrupa Yakası'nda 45 dakikada kepenk arızalarına kesin çözüm.",
+    // 👇 GÜNCELLENEN KISIM
+    title: "Nöbetçi Kepenk | İstanbul 7/24 Acil Servis",
+    description: "İstanbul'un tüm ilçelerinde 45 dakikada kepenk arızalarına kesin çözüm.",
     url: 'https://www.nobetcikepenk.com',
     siteName: 'Nöbetçi Kepenk',
     locale: 'tr_TR',
@@ -58,8 +61,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: "Nöbetçi Kepenk | 7/24 Acil Servis",
-    description: "Avrupa Yakası'nda 45 dakikada kepenk arızalarına kesin çözüm.",
+    // 👇 GÜNCELLENEN KISIM
+    title: "Nöbetçi Kepenk | İstanbul 7/24 Acil Servis",
+    description: "İstanbul'un tüm ilçelerinde 45 dakikada kepenk arızalarına kesin çözüm.",
   },
   robots: {
     index: true,
@@ -86,7 +90,7 @@ export default function RootLayout({
     <html lang="tr" className={`${inter.variable} ${poppins.variable} scroll-smooth`}>
       <body className="min-h-screen flex flex-col font-sans pb-[80px] md:pb-0">
         
-        {/* Animasyonlar ve Takip Kodları */}
+        {/* Animasyonlar ve Takip Kodları (Sayfa en üstünde çalışmalı) */}
         <ShutterAnimation />
         <ClientTracker />
         
