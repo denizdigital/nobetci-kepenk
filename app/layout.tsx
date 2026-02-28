@@ -2,12 +2,19 @@ import type { Metadata } from "next";
 import { Inter, Poppins } from "next/font/google";
 import "./globals.css";
 
-// Bileşen importları
+// --- BİLEŞEN İMPORTLARI (DÜZELTİLMİŞ HALİ) ---
+
 import Navbar from "@/components/shared/Navbar";
-import Footer from "@/components/shared/Footer";
+
+// Footer 'shared' klasöründe değilse bu satırı: import Footer from "@/components/Footer"; yapın.
+import Footer from "@/components/shared/Footer"; 
+
 import CTAStickyBar from "@/components/shared/CTAStickyBar";
 import ClientTracker from "@/components/shared/ClientTracker";
-import ShutterAnimation from "@/components/ui/ShutterAnimation"; // Kepenk Animasyonu Eklendi
+import ShutterAnimation from "@/components/ui/ShutterAnimation";
+
+// ✅ DÜZELTİLEN SATIR BURASI:
+import CookieBanner from "@/components/ui/CookieBanner"; 
 
 const inter = Inter({ 
   subsets: ["latin"], 
@@ -22,7 +29,6 @@ const poppins = Poppins({
   display: "swap",
 });
 
-// Gelişmiş SEO, Open Graph ve Teknik Metadatalar
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.nobetcikepenk.com'),
   title: {
@@ -78,16 +84,29 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="tr" className={`${inter.variable} ${poppins.variable} scroll-smooth`}>
-      {/* pb-[80px] mobil sticky bar'ın footer'ı kapatmasını engeller */}
       <body className="min-h-screen flex flex-col font-sans pb-[80px] md:pb-0">
-        <ShutterAnimation /> {/* İlk açılış kepenk efekti eklendi */}
+        
+        {/* Animasyonlar ve Takip Kodları */}
+        <ShutterAnimation />
         <ClientTracker />
+        
+        {/* Üst Menü */}
         <Navbar />
+        
+        {/* Sayfa İçeriği */}
         <main className="flex-grow">
           {children}
         </main>
+        
+        {/* Alt Menü (Footer) */}
         <Footer />
+        
+        {/* Mobil Yapışkan Menü */}
         <CTAStickyBar />
+
+        {/* COOKIE BANNER (En Üste Çıkması İçin En Sona Ekledik) */}
+        <CookieBanner />
+        
       </body>
     </html>
   );

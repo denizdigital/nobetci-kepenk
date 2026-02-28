@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import Logo from './Logo';
+import Logo from './Logo'; // Eğer Logo.tsx Footer ile aynı klasördeyse bu satır kalsın.
+import DDOLogo from '@/components/ui/DDOLogo'; // <-- KRİTİK DÜZELTME BURADA
 import { Phone, MapPin, Clock } from 'lucide-react';
 
 export default function Footer() {
@@ -47,8 +48,18 @@ export default function Footer() {
         </div>
       </div>
       
-      <div className="container mx-auto px-4 mt-12 pt-8 border-t border-gray-800 text-center text-xs text-gray-500 flex flex-col md:flex-row justify-between items-center gap-4">
+      {/* Alt Çubuk (Copyright + DDO Logo + KVKK) */}
+      <div className="container mx-auto px-4 mt-12 pt-8 border-t border-gray-800 text-center text-xs text-gray-500 flex flex-col md:flex-row justify-between items-center gap-6">
         <p>&copy; {new Date().getFullYear()} Nöbetçi Kepenk. Tüm hakları saklıdır.</p>
+        
+        {/* Deniz Digital Operate Logo - Orta Alan */}
+        <div className="flex flex-col items-center gap-1 group">
+          <span className="text-[10px] text-gray-600 group-hover:text-gray-400 transition-colors">Designed & Developed by</span>
+          <a href="https://denizdigitaloperate.com" target="_blank" rel="noopener noreferrer" className="block" aria-label="Deniz Digital Operate">
+            <DDOLogo className="h-6 w-auto opacity-60 group-hover:opacity-100 transition-opacity duration-300" />
+          </a>
+        </div>
+
         <p>🔒 Verileriniz KVKK kapsamında korunmaktadır. IP adresleri maskelenerek şifrelenir.</p>
       </div>
     </footer>
