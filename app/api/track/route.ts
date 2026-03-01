@@ -1,37 +1,53 @@
 import { NextResponse } from 'next/server';
-import { hashIp, logEvent } from '@/lib/logger';
+import { logEvent, hashIp } from '@/lib/logger';
 
-export async function POST(req: Request) {
+export async function POST(request: Request) {
   try {
-    // 1. IP Adresini Al ve Maskele (KVKK)
-    const forwardedFor = req.headers.get('x-forwarded-for');
-    const realIp = forwardedFor ? forwardedFor.split(',')[0] : 'unknown';
-    const visitorId = hashIp(realIp);
+    const data = await request.json();
+    
+    // 1. IP Adresini Yakala
+    let ip = request.headers.get('x-forwarded-for') || '127.0.0.1';
+    if (ip.includes(',')) ip = ip.split(',')[0]; // Proxy varsa ilk IP'yi al
 
-    // 2. User-Agent ve Bot Kontrolü
-    const userAgent = req.headers.get('user-agent') || '';
-    const isSuspicious = userAgent.toLowerCase().includes('bot') || userAgent.toLowerCase().includes('headless');
-
-    // 3. İstemci Verisini Al
-    const body = await req.json();
-
-    // 4. Veriyi Zenginleştir ve Kaydet
-    const eventPayload = {
-      visitor_id: visitorId,
-      event_type: body.type, // page_view, click, scroll, heartbeat
-      url: body.url,
-      data: body.data || {},
-      timestamp: body.timestamp,
-      risk_flags: {
-        is_suspicious_ua: isSuspicious,
-        webdriver: body.webdriver || false,
+    // 2. IP Adresinden Konum Bul (GeoIP Servisi)
+    let geoData = { city: 'Bilinmiyor', country: 'TR' };
+    
+    // Localhost değilse sorgula
+    if (ip !== '127.0.0.1' && ip !== '::1') {
+      try {
+        // ip-api.com ücretsiz ve key gerektirmez (Ticari olmayan kullanım için)
+        const geoRes = await fetch(`http://ip-api.com/json/${ip}?fields=city,countryCode`);
+        if (geoRes.ok) {
+          const geoJson = await geoRes.json();
+          geoData = { 
+            city: geoJson.city || 'Bilinmiyor', 
+            country: geoJson.countryCode || 'TR' 
+          };
+        }
+      } catch (e) {
+        console.error('GeoIP hatası:', e);
       }
-    };
+    } else {
+      geoData = { city: 'Yerel Sunucu', country: 'Local' };
+    }
+    
+    // 3. Veriyi Kaydet
+    // IP'yi açıkça görmek istediğin için hem şifreli ID hem gerçek IP'yi yolluyoruz
+    const visitorId = hashIp(ip); 
 
-    logEvent(eventPayload);
+    logEvent({
+      ...data,
+      ip: ip,                 // <--- ARTIK GERÇEK IP'Yİ GÖNDERİYORUZ
+      visitor_id: visitorId,
+      geo: geoData,           // <--- ŞEHİR VE ÜLKE BİLGİSİ
+      event_type: 'page_view',
+      risk_flags: {
+        is_suspicious_ua: !data.userAgent || data.userAgent.length < 10
+      }
+    });
 
-    return NextResponse.json({ success: true, message: 'Tracked' }, { status: 200 });
+    return NextResponse.json({ success: true });
   } catch (error) {
-    return NextResponse.json({ success: false, error: 'Invalid payload' }, { status: 400 });
+    return NextResponse.json({ success: false }, { status: 500 });
   }
 }

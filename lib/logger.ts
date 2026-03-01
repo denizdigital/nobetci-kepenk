@@ -1,26 +1,43 @@
 import crypto from 'crypto';
 
+// Global Hafıza
+const globalStore = global as unknown as { 
+  eventLogs: any[], 
+  blockedIps: Set<string> 
+};
+
+if (!globalStore.eventLogs) globalStore.eventLogs = [];
+if (!globalStore.blockedIps) globalStore.blockedIps = new Set();
+
+export const eventLogs = globalStore.eventLogs;
+export const blockedIps = globalStore.blockedIps;
+
 export function hashIp(ip: string): string {
-  const salt = process.env.TRACKER_SALT || 'nobetci-kepenk-secure-salt-2026';
+  const salt = process.env.TRACKER_SALT || 'salt-2026';
   return crypto.createHash('sha256').update(ip + salt).digest('hex').substring(0, 16);
 }
 
-export const eventLogs: any[] = [];
-export const blockedIps: Set<string> = new Set(); // Engellenen Ziyaretçi ID'leri
-
+// Olay Kaydetme
 export function logEvent(data: any) {
-  eventLogs.unshift({ ...data, id: Date.now().toString(), server_time: new Date().toISOString() });
-  if (eventLogs.length > 2000) eventLogs.pop(); // Son 2000 hareketi tut
+  eventLogs.unshift({ 
+    ...data, 
+    server_time: new Date().toISOString() 
+  });
+  if (eventLogs.length > 2000) eventLogs.pop();
 }
 
-// Admin panelinde göstermek üzere ziyaretçileri grupla ve risk skoru hesapla
+// İstatistikleri Derleme
 export function getVisitorStats() {
   const visitors = new Map();
   
   eventLogs.forEach(log => {
+    if (!log.visitor_id) return;
+
     if (!visitors.has(log.visitor_id)) {
       visitors.set(log.visitor_id, {
         id: log.visitor_id,
+        real_ip: log.ip || 'Gizli',         // <--- IP EKLENDİ
+        location: log.geo || { city: '-', country: '-' }, // <--- KONUM EKLENDİ
         events: 0,
         risk_score: 0,
         is_blocked: blockedIps.has(log.visitor_id),
@@ -33,13 +50,14 @@ export function getVisitorStats() {
     v.events += 1;
     v.interactions.push(log.event_type);
     
+    // Risk Skoru
     if (log.risk_flags?.is_suspicious_ua) v.suspicious_flags += 1;
-    if (log.risk_flags?.webdriver) v.suspicious_flags += 5; // Headless bot tespiti ağır kusurdur
-    
-    // Risk Algoritması: Çok fazla event (spam) + Şüpheli sinyaller
     v.risk_score = Math.min(100, (v.events * 1.5) + (v.suspicious_flags * 20));
+
+    if (new Date(log.server_time) > new Date(v.last_seen)) {
+      v.last_seen = log.server_time;
+    }
   });
   
-  // En yüksek riskliler en üstte olacak şekilde sırala
   return Array.from(visitors.values()).sort((a, b) => b.risk_score - a.risk_score);
 }
