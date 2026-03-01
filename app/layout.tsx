@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Inter, Poppins } from "next/font/google";
 import "./globals.css";
 
+// 👇 BU SATIRI EKLEDİK (Build hatasını çözmek için gerekli)
+import { Suspense } from "react"; 
+
 // --- BİLEŞEN İMPORTLARI ---
 
 import Navbar from "@/components/shared/Navbar";
@@ -92,7 +95,11 @@ export default function RootLayout({
         
         {/* Animasyonlar ve Takip Kodları (Sayfa en üstünde çalışmalı) */}
         <ShutterAnimation />
-        <ClientTracker />
+
+        {/* 👇 DÜZELTME BURADA: ClientTracker Suspense içine alındı */}
+        <Suspense fallback={null}>
+          <ClientTracker />
+        </Suspense>
         
         {/* Üst Menü */}
         <Navbar />
