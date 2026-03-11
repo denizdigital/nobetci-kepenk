@@ -5,18 +5,15 @@ import "./globals.css";
 // 👇 BU SATIRI EKLEDİK (Build hatasını çözmek için gerekli)
 import { Suspense } from "react"; 
 
+// 👇 GTM İÇİN GEREKLİ SCRIPT BİLEŞENİ
+import Script from "next/script";
+
 // --- BİLEŞEN İMPORTLARI ---
-
 import Navbar from "@/components/shared/Navbar";
-
-// Footer 'shared' klasöründe değilse bu satırı: import Footer from "@/components/Footer"; yapın.
 import Footer from "@/components/shared/Footer"; 
-
 import CTAStickyBar from "@/components/shared/CTAStickyBar";
 import ClientTracker from "@/components/shared/ClientTracker";
 import ShutterAnimation from "@/components/ui/ShutterAnimation";
-
-// ✅ COOKIE BANNER (Doğru Import)
 import CookieBanner from "@/components/ui/CookieBanner"; 
 
 const inter = Inter({ 
@@ -38,15 +35,12 @@ export const metadata: Metadata = {
     default: "İstanbul Kepenk Tamiri | 7/24 Acil Servis & 45 Dk'da Kapınızda",
     template: "%s | Nöbetçi Kepenk"
   },
-  // 👇 GÜNCELLENEN KISIM: "Avrupa Yakası" yerine "İstanbul genelinde" yazıldı
   description: "İstanbul genelinde 7/24 nöbetçi kepenk tamiri servisi. Anadolu ve Avrupa yakasında garantili motor değişimi, otomatik kepenk onarımı için hemen arayın: 0536 482 52 05.",
-  // 👇 GÜNCELLENEN KISIM: Anahtar kelimelere "anadolu yakası" eklendi
   keywords: ["kepenk tamiri", "otomatik kepenk servisi", "kepenk motoru", "istanbul kepenk tamircisi", "7/24 kepenk tamiri", "anadolu yakası kepenk tamiri"],
   alternates: {
     canonical: '/',
   },
   openGraph: {
-    // 👇 GÜNCELLENEN KISIM
     title: "Nöbetçi Kepenk | İstanbul 7/24 Acil Servis",
     description: "İstanbul'un tüm ilçelerinde 45 dakikada kepenk arızalarına kesin çözüm.",
     url: 'https://www.nobetcikepenk.com',
@@ -64,7 +58,6 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    // 👇 GÜNCELLENEN KISIM
     title: "Nöbetçi Kepenk | İstanbul 7/24 Acil Servis",
     description: "İstanbul'un tüm ilçelerinde 45 dakikada kepenk arızalarına kesin çözüm.",
   },
@@ -93,10 +86,25 @@ export default function RootLayout({
     <html lang="tr" className={`${inter.variable} ${poppins.variable} scroll-smooth`}>
       <body className="min-h-screen flex flex-col font-sans pb-[80px] md:pb-0">
         
+        {/* 👇 GTM RADARI BAŞLANGIÇ */}
+        <Script id="google-tag-manager" strategy="afterInteractive">
+          {`
+            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer','GTM-K4J88XDP');
+          `}
+        </Script>
+        <noscript>
+          <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-K4J88XDP"
+          height="0" width="0" style={{ display: 'none', visibility: 'hidden' }}></iframe>
+        </noscript>
+        {/* 👆 GTM RADARI BİTİŞ */}
+
         {/* Animasyonlar ve Takip Kodları (Sayfa en üstünde çalışmalı) */}
         <ShutterAnimation />
 
-        {/* 👇 DÜZELTME BURADA: ClientTracker Suspense içine alındı */}
         <Suspense fallback={null}>
           <ClientTracker />
         </Suspense>
