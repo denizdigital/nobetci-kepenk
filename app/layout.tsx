@@ -3,7 +3,6 @@ import { Inter, Poppins } from "next/font/google";
 import "./globals.css";
 
 import { Suspense } from "react";
-import Script from "next/script";
 
 // --- BİLEŞEN İMPORTLARI ---
 import Navbar from "@/components/shared/Navbar";
@@ -90,20 +89,24 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="tr" className={`${inter.variable} ${poppins.variable} scroll-smooth`}>
-      <body className="min-h-screen flex flex-col font-sans pb-[80px] md:pb-0">
-        <Script
+      <head>
+        <script
+          async
           src="https://www.googletagmanager.com/gtag/js?id=AW-17998272289"
-          strategy="afterInteractive"
+        ></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'AW-17998272289');
+            `,
+          }}
         />
-        <Script id="google-ads-tag" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'AW-17998272289');
-          `}
-        </Script>
+      </head>
 
+      <body className="min-h-screen flex flex-col font-sans pb-[80px] md:pb-0">
         {/* Animasyonlar ve Takip Kodları */}
         <ShutterAnimation />
 
