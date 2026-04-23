@@ -10,7 +10,7 @@ import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
 import CTAStickyBar from "@/components/shared/CTAStickyBar";
 import ClientTracker from "@/components/shared/ClientTracker";
-import SecurityTracker from "../components/shared/SecurityTracker";
+import SecurityTracker from "@/components/shared/SecurityTracker";
 import ShutterAnimation from "@/components/ui/ShutterAnimation";
 import CookieBanner from "@/components/ui/CookieBanner";
 
