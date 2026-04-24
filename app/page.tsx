@@ -1,3 +1,6 @@
+'use client'; // Client-side fetch işlemi için şart
+
+import { useEffect } from 'react'; // Tıklama yakalayıcı için ekledik
 import Link from 'next/link';
 import { Phone, MessageCircle, ShieldCheck, Clock, Wrench, Zap, Settings, ArrowRight, MapPin, Truck, Navigation } from 'lucide-react';
 
@@ -13,6 +16,30 @@ const districts = [
 ];
 
 export default function Home() {
+  
+  // --- CLICKGUARD TRACKER BAŞLANGIÇ ---
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const gclid = urlParams.get('gclid');
+
+    if (gclid) {
+      // Not: Geliştirme aşamasında localhost, yayında gerçek IP/Domain yazılmalı
+      const BACKEND_URL = 'http://localhost:5000/api/track';
+      
+      fetch(BACKEND_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          gclid: gclid,
+          userAgent: navigator.userAgent
+        })
+      })
+      .then(() => console.log('ClickGuard: Kalkan Devrede - Av Loglandı'))
+      .catch(err => console.error('ClickGuard: Sunucu hatası', err));
+    }
+  }, []);
+  // --- CLICKGUARD TRACKER BİTİŞ ---
+
   return (
     <div className="flex flex-col min-h-screen bg-white">
       
@@ -52,10 +79,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* --- 2. GERÇEK HARİTA & ARAÇLAR (Canlı Takip Hissi) --- */}
+      {/* --- 2. GERÇEK HARİTA & ARAÇLAR --- */}
       <section className="relative w-full h-[400px] md:h-[500px] bg-gray-200 border-b-8 border-brand-yellow overflow-hidden group">
-        
-        {/* Google Maps Iframe (Gri Tonlamalı - grayscale) */}
         <iframe 
           src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d192697.7932863719!2d28.87209637731353!3d41.00549580931367!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14caa7040068086b%3A0xe1ccfe98bc01b0d0!2zxLBzdGFuYnVs!5e0!3m2!1str!2str!4v1709248000000!5m2!1str!2str" 
           width="100%" 
@@ -64,13 +89,11 @@ export default function Home() {
           allowFullScreen={false} 
           loading="lazy" 
           referrerPolicy="no-referrer-when-downgrade"
-          className="absolute inset-0 z-0 pointer-events-none opacity-60" // Haritaya tıklamayı engelledik, arka plan gibi dursun
+          className="absolute inset-0 z-0 pointer-events-none opacity-60"
         ></iframe>
 
-        {/* Harita Üzeri Overlay (Hafif karartma) */}
         <div className="absolute inset-0 bg-brand-dark/10 pointer-events-none z-0"></div>
 
-        {/* Üst Bilgi Kartı */}
         <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-20 bg-white shadow-xl px-6 py-3 rounded-full flex items-center gap-3 border border-gray-200">
           <span className="relative flex h-3 w-3">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
@@ -81,9 +104,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* --- HARİTA ÜZERİNDEKİ ARAÇLAR (Sabit Konumlar) --- */}
-
-        {/* Araç 1: Avrupa Yakası (Beşiktaş/Şişli civarı) */}
+        {/* Araç 1 */}
         <div className="absolute top-[40%] left-[35%] z-10 flex flex-col items-center group cursor-pointer hover:scale-110 transition-transform">
           <div className="relative">
              <div className="absolute -inset-4 bg-brand-yellow/30 rounded-full animate-pulse"></div>
@@ -96,7 +117,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Araç 2: Anadolu Yakası (Kadıköy/Ataşehir civarı) */}
+        {/* Araç 2 */}
         <div className="absolute top-[55%] left-[60%] z-10 flex flex-col items-center group cursor-pointer hover:scale-110 transition-transform">
           <div className="relative">
              <div className="absolute -inset-4 bg-brand-yellow/30 rounded-full animate-pulse" style={{ animationDelay: '1s' }}></div>
@@ -108,20 +129,6 @@ export default function Home() {
             Anadolu Ekibi <br/><span className="text-orange-500 text-[10px]">Serviste (15 dk)</span>
           </div>
         </div>
-
-        {/* Araç 3: Uzak Bölge (Beylikdüzü/Avcılar civarı) */}
-        <div className="absolute top-[35%] left-[15%] z-10 flex flex-col items-center group cursor-pointer hover:scale-110 transition-transform">
-          <div className="relative">
-             <div className="absolute -inset-4 bg-brand-yellow/30 rounded-full animate-pulse" style={{ animationDelay: '0.5s' }}></div>
-             <div className="bg-brand-dark text-white p-2 rounded-full border-2 border-brand-yellow shadow-lg relative z-10">
-               <Truck size={20} />
-             </div>
-          </div>
-          <div className="bg-white text-gray-800 text-xs font-bold px-2 py-1 rounded shadow-md mt-2 border border-gray-200">
-            Mobil Ekip <br/><span className="text-green-600 text-[10px]">Seyir Halinde</span>
-          </div>
-        </div>
-
       </section>
 
       {/* --- 3. HİZMETLER GRID --- */}
@@ -165,7 +172,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* --- 5. İLÇELER (DÜZELTİLDİ: "Tümünü Gör" Butonlu Modern Yapı) --- */}
+      {/* --- 5. İLÇELER --- */}
       <section className="py-20 bg-white px-4 border-t border-gray-100">
         <div className="container mx-auto max-w-5xl">
           <div className="flex flex-col md:flex-row items-start md:items-end justify-between mb-10 gap-4">
