@@ -24,7 +24,7 @@ export default function Home() {
 
     if (gclid) {
       // Not: Geliştirme aşamasında localhost, yayında gerçek IP/Domain yazılmalı
-      const BACKEND_URL = 'http://localhost:5000/api/track';
+      const BACKEND_URL = 'https://clickguard-backend-m8dg.onrender.com/api/track';
       
       fetch(BACKEND_URL, {
         method: 'POST',
