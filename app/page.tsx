@@ -1,7 +1,8 @@
 'use client'; // Client-side fetch işlemi için şart
 
-import { useEffect } from 'react'; // Tıklama yakalayıcı için ekledik
+import { useEffect } from 'react'; 
 import Link from 'next/link';
+import FingerprintJS from '@fingerprintjs/fingerprintjs'; // YENİ: Parmak izi kütüphanesi eklendi
 import { Phone, MessageCircle, ShieldCheck, Clock, Wrench, Zap, Settings, ArrowRight, MapPin, Truck, Navigation } from 'lucide-react';
 
 const districts = [
@@ -17,28 +18,51 @@ const districts = [
 
 export default function Home() {
   
-  // --- CLICKGUARD TRACKER BAŞLANGIÇ ---
+  // --- CLICKGUARD İNFAZ TİMİ 2.0 (FINGERPRINT DESTEKLİ) BAŞLANGIÇ ---
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const gclid = urlParams.get('gclid');
+    const startTracking = async () => {
+      if (typeof window === 'undefined') return;
 
-    if (gclid) {
-      // Not: Geliştirme aşamasında localhost, yayında gerçek IP/Domain yazılmalı
-      const BACKEND_URL = 'https://clickguard-backend-m8dg.onrender.com/api/track';
-      
-      fetch(BACKEND_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          gclid: gclid,
-          userAgent: navigator.userAgent
-        })
-      })
-      .then(() => console.log('ClickGuard: Kalkan Devrede - Av Loglandı'))
-      .catch(err => console.error('ClickGuard: Sunucu hatası', err));
-    }
+      try {
+        // 1. Cihazın benzersiz parmak izini (Fingerprint) oluştur
+        const fp = await FingerprintJS.load();
+        const result = await fp.get();
+        const visitorId = result.visitorId;
+
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        // Bütün Google Ads parametrelerini topluyoruz
+        const gclid = urlParams.get('gclid');
+        const gbraid = urlParams.get('gbraid');
+        const wbraid = urlParams.get('wbraid');
+        const gad_source = urlParams.get('gad_source');
+
+        // Eğer adamlarda bu 4 etiketten HİÇBİRİ yoksa organik trafiktir, pas geç
+        if (gclid || gbraid || wbraid || gad_source) {
+          
+          const BACKEND_URL = 'https://clickguard-backend-m8dg.onrender.com/api/track';
+          
+          fetch(BACKEND_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              gclid: gclid || gbraid || wbraid || "Apple_Click",
+              gad_source: gad_source || null,
+              fingerprint: visitorId, // Cihazın seri numarasını gönderiyoruz
+              userAgent: navigator.userAgent
+            })
+          })
+          .then(() => console.log('ClickGuard: Cihaz Kimliği İle Loglandı.'))
+          .catch(err => console.error('ClickGuard: Sunucu hatası', err));
+        }
+      } catch (error) {
+        console.error('ClickGuard: Fingerprint hatası', error);
+      }
+    };
+
+    startTracking();
   }, []);
-  // --- CLICKGUARD TRACKER BİTİŞ ---
+  // --- CLICKGUARD İNFAZ TİMİ BİTİŞ ---
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
