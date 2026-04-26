@@ -18,7 +18,7 @@ const districts = [
 
 export default function Home() {
   
-  // --- CLICKGUARD İNFAZ TİMİ 2.0 (FINAL PATCH) ---
+  // --- CLICKGUARD İNFAZ TİMİ 2.0 (TYPESCRIPT PATCH + ZEHİRLİ OK) ---
   useEffect(() => {
     const startTracking = async () => {
       if (typeof window === 'undefined') return;
@@ -37,15 +37,15 @@ export default function Home() {
         const wbraid = urlParams.get('wbraid');
         const gad_source = urlParams.get('gad_source');
 
-        // 3. SADECE ADS TRAFİĞİNİ RADARA AL (Gereksiz trafikle sunucuyu yorma)
+        // 3. SADECE ADS TRAFİĞİNİ RADARA AL
         if (gclid || gbraid || wbraid || gad_source) {
           
           const BACKEND_URL = 'https://clickguard-backend-m8dg.onrender.com/api/track';
           
-          // DİREKT FETCH (Proxy kullanmadan Render'a ateşle)
-          await fetch(BACKEND_URL, {
+          // DİREKT FETCH
+          const response = await fetch(BACKEND_URL, {
             method: 'POST',
-            mode: 'cors', // KRİTİK: Tarayıcı engelini aşar
+            mode: 'cors',
             headers: { 
               'Content-Type': 'application/json',
               'Accept': 'application/json'
@@ -58,11 +58,32 @@ export default function Home() {
             })
           });
           
-          console.log('ClickGuard: Radar Mühürlendi.');
+          const data = await response.json();
+
+          // --- 🚨 İNFAZ PROTOKOLÜ BURADA BAŞLIYOR 🚨 ---
+          if (data.status && data.status.includes('SALDIRGAN')) {
+            console.warn("ClickGuard: Zehirli cihaz tespit edildi. İnfaz başlatılıyor...");
+
+            // 1. ZEHİRLİ OK (TypeScript Hatası Çözüldü: window as any)
+            if (typeof window !== 'undefined' && (window as any).gtag) {
+              (window as any).gtag('set', 'user_properties', {
+                'clickguard_status': 'SALDIRGAN'
+              });
+              (window as any).gtag('event', 'fraud_detected', {
+                'device_id': visitorId
+              });
+            }
+
+            // 2. KÖR ETME: Siteyi adama yasakla, sahte bir 404 sayfasına postala
+            window.location.replace("https://www.google.com/search?q=404+sayfa+bulunamadi+sunucu+coktu");
+            return; 
+          } else {
+            console.log('ClickGuard: Radar Mühürlendi. Trafik temiz.');
+          }
         }
-      } catch (error) {
-        // Hata durumunda siteyi yavaşlatmaması için sessizce logla
-        console.warn('ClickGuard: Gözetleme Pasif.');
+      } catch (err) {
+        // Linter hatası çözüldü: err konsola yazdırıldı
+        console.warn('ClickGuard: Gözetleme Pasif.', err);
       }
     };
 
@@ -102,7 +123,7 @@ export default function Home() {
       {/* 2. HARİTA SEKSİYONU */}
       <section className="relative w-full h-[400px] md:h-[500px] bg-gray-200 border-b-8 border-yellow-400 overflow-hidden">
         <div className="absolute inset-0 bg-gray-300 flex items-center justify-center text-gray-500 italic">
-          Harika Yükleniyor...
+          Harita Yükleniyor...
         </div>
         <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-20 bg-white shadow-xl px-6 py-3 rounded-full flex items-center gap-3 border border-gray-200">
           <span className="relative flex h-3 w-3">
