@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react'; 
 import Link from 'next/link';
-import FingerprintJS from '@fingerprintjs/fingerprintjs'; 
+// DİKKAT: FingerprintJS importunu tamamen sildik, artık bizim HOX mühür sistemimiz devrede!
 import { Phone, MessageCircle, ShieldCheck, Clock, Wrench, Zap, Settings, ArrowRight, MapPin, Truck, Navigation } from 'lucide-react';
 
 const districts = [
@@ -18,81 +18,137 @@ const districts = [
 
 export default function Home() {
   
-  // --- CLICKGUARD İNFAZ TİMİ 2.0 (TYPESCRIPT PATCH + ZEHİRLİ OK) ---
+  // --- CLICKGUARD İNFAZ TİMİ 3.0 (HOX_ MÜHÜR + ZOMBİ RADARI) ---
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    // 1. İNSANLIK TESTİ (Fare/Dokunmatik Takibi)
+    let isHuman = false;
+    const setHuman = () => {
+      isHuman = true;
+      window.removeEventListener('mousemove', setHuman);
+      window.removeEventListener('touchstart', setHuman);
+      window.removeEventListener('scroll', setHuman);
+      console.log("ClickGuard: İnsan belirtisi doğrulandı.");
+    };
+    window.addEventListener('mousemove', setHuman);
+    window.addEventListener('touchstart', setHuman);
+    window.addEventListener('scroll', setHuman);
+
+    // 2. KUSURSUZ KİMLİK MÜHRÜ (LocalStorage)
+    const getFingerprint = () => {
+      let fp = localStorage.getItem('hox_cihaz_kimligi');
+      if (!fp) {
+        const screenData = window.screen.width + "x" + window.screen.height;
+        const coreData = navigator.hardwareConcurrency || '0';
+        const randomSalt = Math.random().toString(36).substring(2, 10);
+        const timeStamp = Date.now().toString(36);
+        fp = 'HOX_' + timeStamp + '_' + screenData + '_' + coreData + '_' + randomSalt;
+        localStorage.setItem('hox_cihaz_kimligi', fp);
+      }
+      return fp;
+    };
+
     const startTracking = async () => {
-      if (typeof window === 'undefined') return;
-
       try {
-        // 1. Parmak İzi Yükleme
-        const fp = await FingerprintJS.load();
-        const result = await fp.get();
-        const visitorId = result.visitorId;
-
         const urlParams = new URLSearchParams(window.location.search);
         
-        // 2. Google Ads Parametreleri
         const gclid = urlParams.get('gclid');
         const gbraid = urlParams.get('gbraid');
         const wbraid = urlParams.get('wbraid');
         const gad_source = urlParams.get('gad_source');
 
-        // 3. SADECE ADS TRAFİĞİNİ RADARA AL
+        // SADECE ADS TRAFİĞİNİ RADARA AL
         if (gclid || gbraid || wbraid || gad_source) {
           
-          const BACKEND_URL = 'https://clickguard-backend-m8dg.onrender.com/api/track';
-          
-          // DİREKT FETCH
-          const response = await fetch(BACKEND_URL, {
-            method: 'POST',
-            mode: 'cors',
-            headers: { 
-              'Content-Type': 'application/json',
-              'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-              gclid: gclid || gbraid || wbraid || "Apple_Click",
-              gad_source: gad_source || null,
-              fingerprint: visitorId,
-              userAgent: navigator.userAgent
-            })
-          });
-          
-          const data = await response.json();
+          // Site açıldıktan sonra botların donup kalmasını avlamak için 5 saniye bekle
+          setTimeout(async () => {
+            const BACKEND_URL = 'https://clickguard-backend-m8dg.onrender.com/api/track';
+            const visitorId = getFingerprint();
+            let statusOverride = undefined;
 
-          // --- 🚨 İNFAZ PROTOKOLÜ BURADA BAŞLIYOR 🚨 ---
-          if (data.status && data.status.includes('SALDIRGAN')) {
-            console.warn("ClickGuard: Zehirli cihaz tespit edildi. İnfaz başlatılıyor...");
-
-            // 1. ZEHİRLİ OK (TypeScript Hatası Çözüldü: window as any)
-            if (typeof window !== 'undefined' && (window as any).gtag) {
-              (window as any).gtag('set', 'user_properties', {
-                'clickguard_status': 'SALDIRGAN'
-              });
-              (window as any).gtag('event', 'fraud_detected', {
-                'device_id': visitorId
-              });
+            if (!isHuman) {
+              console.log("ClickGuard: 5 saniyedir hareket yok, Zombi Ban sinyali gönderiliyor...");
+              statusOverride = 'ZOMBI_BOT_BAN';
             }
 
-            // 2. KÖR ETME: Siteyi adama yasakla, sahte bir 404 sayfasına postala
-            window.location.replace("https://www.google.com/search?q=404+sayfa+bulunamadi+sunucu+coktu");
-            return; 
-          } else {
-            console.log('ClickGuard: Radar Mühürlendi. Trafik temiz.');
-          }
+            // MERKEZE VERİ GÖNDERİMİ
+            const response = await fetch(BACKEND_URL, {
+              method: 'POST',
+              mode: 'cors',
+              headers: { 
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+              },
+              body: JSON.stringify({
+                gclid: gclid || gbraid || wbraid || "Apple_Click",
+                gad_source: gad_source || null,
+                fingerprint: visitorId,
+                userAgent: navigator.userAgent,
+                is_human: isHuman,
+                status_override: statusOverride
+              })
+            });
+            
+            const data = await response.json();
+
+            // --- 🚨 İNFAZ PROTOKOLÜ 🚨 ---
+            if (data.status && data.status.includes('SALDIRGAN')) {
+              console.warn("ClickGuard: Zehirli cihaz tespit edildi. İnfaz başlatılıyor...");
+
+              // Zehirli Ok (Google'a Bildir - Çocuğun Tag'i G-E5LFKT77Q3 için)
+              if (typeof window !== 'undefined' && (window as any).gtag) {
+                (window as any).gtag('set', 'user_properties', {
+                  'clickguard_status': 'SALDIRGAN'
+                });
+                (window as any).gtag('event', 'fraud_detected', {
+                  'device_id': visitorId
+                });
+              }
+
+              // KÖR ETME: Sahte 404
+              window.location.replace("https://www.google.com/search?q=404+sayfa+bulunamadi+sunucu+coktu");
+            } else {
+              console.log('ClickGuard: Radar Mühürlendi. Trafik temiz.');
+            }
+          }, 5000); // 5 Saniye Zombi Bekleme Süresi
         }
       } catch (err) {
-        // Linter hatası çözüldü: err konsola yazdırıldı
         console.warn('ClickGuard: Gözetleme Pasif.', err);
       }
     };
 
     startTracking();
+
+    return () => {
+      window.removeEventListener('mousemove', setHuman);
+      window.removeEventListener('touchstart', setHuman);
+      window.removeEventListener('scroll', setHuman);
+    };
   }, []);
-  // --- CLICKGUARD İNFAZ TİMİ BİTİŞ ---
+
+  // Bal Tuzağı Tetikleyici
+  const handleHoneypot = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    const fp = localStorage.getItem('hox_cihaz_kimligi') || "GHOST_BOT";
+    await fetch('https://clickguard-backend-m8dg.onrender.com/api/track', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ gad_source: 'HONEYPOT_TRAP', fingerprint: fp, userAgent: navigator.userAgent })
+    });
+    window.location.replace("https://www.google.com/search?q=404");
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-white text-gray-900">
+      
+      {/* --- CLICKGUARD BAL TUZAĞI (Sadece Botlar Görür ve Tıklar) --- */}
+      <div style={{ display: 'none', visibility: 'hidden', position: 'absolute', left: '-9999px' }} aria-hidden="true">
+        <a href="#" id="hox_secure_portal" tabIndex={-1} onClick={handleHoneypot}>
+          Gizli Sistem Paneli
+        </a>
+      </div>
+
       {/* 1. HERO SEKSİYONU */}
       <section className="relative w-full bg-gray-950 pt-24 pb-20 overflow-hidden">
         <div className="absolute inset-0 opacity-10 pointer-events-none">
